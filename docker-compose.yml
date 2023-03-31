@@ -15,9 +15,9 @@ services:
       NODE_ENV: development
       JWT_SECRET: something
       COOKIE_SECRET: something
-      PORT: 9000
+      PORT: 9004
     ports:
-      - "9000:9000"
+      - "9004:9004"
     volumes:
       - .:/app/medusa
       - node_modules:/app/medusa/node_modules
