@@ -65,7 +65,11 @@ class UnomiService extends BaseService {
               ],
             }
           }
-          return await this.client_.createProfile(data)
+      
+          const res = await this.client_.createProfile(data)
+          console.log(res)
+          console.log("-----------Import Product to Unomi Success")
+          return res
         })
       )
     })
