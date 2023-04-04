@@ -1,14 +1,9 @@
-import { TransactionBaseService, Product } from "@medusajs/medusa"
-import axios from 'axios';
-import crypto from "crypto"
 import { BaseService } from "medusa-interfaces"
 class UnomiService extends BaseService {
   constructor(
     {
       unomiClientService,
       manager,
-      shippingProfileService,
-      storeService,
       unomiProductService
     },
     options
@@ -19,10 +14,6 @@ class UnomiService extends BaseService {
     this.manager_ = manager
     /** @private @const {UnomiRestClient} */
     this.client_ = unomiClientService
-    /** @private @const {ShippingProfileService} */
-    this.shippingProfileService_ = shippingProfileService
-    /** @private @const {StoreService} */
-    this.store_ = storeService
     /** @private @const {UnomiProductService} */
     this.productService_ = unomiProductService
   }
@@ -30,7 +21,6 @@ class UnomiService extends BaseService {
     if (!transactionManager) {
       return this
     }
-
     const cloned = new UnomiService({
       manager: transactionManager,
       options: this.options,
@@ -38,38 +28,30 @@ class UnomiService extends BaseService {
       unomiClientService: this.client_,
       storeService: this.store_,
     })
-
     cloned.transactionManager_ = transactionManager
-
     return cloned
   }
   async getProductMedusa() {
-    // const countData = await this.productService_.getProducts()
-    const data = await axios.get(process.env.URL_BACKEND_MEDUSA + `${'store/products'}`)
-    return data
+    const products = this.productService_.getProducts()
+    return products
   }
-
   async createProfileUmoni() {
     return this.atomicPhase_(async (manager) => {
       const products = await this.getProductMedusa()
       await Promise.all(
-        products.data.products.map(async (product) => {
+        products.map(async (product) => {
           const data = {
             "itemId": product.id,
-            "itemType": "product",
+            "itemType": "profile",
             "properties": product,
             "systemProperties": {
               "mergeIdentifier": "bill",
               "lists": [
-                "userListId"
+                "productListId"
               ],
             }
           }
-      
-          const res = await this.client_.createProfile(data)
-          console.log(res)
-          console.log("-----------Import Product to Unomi Success")
-          return res
+          return await this.client_.createProfile(data)
         })
       )
     })
