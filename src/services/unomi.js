@@ -51,6 +51,7 @@ class UnomiService extends BaseService {
               ],
             }
           }
+          console.log(data);
           return await this.client_.createProfile(data)
         })
       )

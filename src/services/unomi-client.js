@@ -9,7 +9,9 @@ class UnomiClientService extends BaseService {
          url: "http://localhost:8181",
          username: "karaf",
          password: "karaf",
-         elasticUrl: "http://localhost:9200" 
+         elasticUrl: "http://localhost:9200",
+         take: 1,
+         skip: 0
         }
     /** @private @const {UnomiRestClient} */
     this.client_ = createClient(this.options)

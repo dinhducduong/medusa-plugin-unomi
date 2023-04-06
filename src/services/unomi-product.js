@@ -36,10 +36,22 @@ class UnomiProductService extends BaseService {
 
   async getProducts() {
     return this.atomicPhase_(async (manager) => {
-      const data = await this.productService_.list({})
+      const data = await this.productService_.list({},{ 
+        take: this.options.take, 
+        skip: this.options.skip,
+        relations:[
+          "variants",
+          "variants.prices",
+          "variants.options",
+          "images",
+          "options",
+          "options.values",
+          "tags",
+          "type",
+          "collection",
+        ] })
       return data
     })
-
   }
 }
 
